@@ -14,11 +14,11 @@ pipeline {
       }
     }
 
-    stage('Build Java') {
-      steps {
-        sh 'mvn clean package'
-      }
-    }
+   stage('Build Java') {
+  steps {
+    bat 'mvn clean package'
+  }
+}
 
     stage('Build Docker Image') {
       steps {
@@ -41,10 +41,10 @@ pipeline {
     stage('Deploy to Kubernetes') {
       steps {
         withKubeConfig([credentialsId: KUBECONFIG_CREDENTIALS_ID]) {
-          sh """
-            kubectl set image deployment/java-app java-app=${IMAGE_NAME}:${BUILD_NUMBER} -n default || \
-            kubectl apply -f k8s/deployment.yaml
-          """
+         bat """
+kubectl set image deployment/java-app java-app=%IMAGE_NAME%:%BUILD_NUMBER% -n default || kubectl apply -f k8s/deployment.yaml
+"""
+
         }
       }
     }
